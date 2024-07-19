@@ -42,8 +42,8 @@ class SpdNotifier {
 
 
           return Data(
-            link: json.keys.where((element) => element.startsWith('_')).first,
-            block: json.keys.where((element) => _isStringOnlyLetters(element)).first,
+            link: json[json.keys.where((element) => element.startsWith('_')).first],
+            block: json[json.keys.where((element) => _isStringOnlyLetters(element)).first],
           );
         },
         toFirestore: (app, _) {
