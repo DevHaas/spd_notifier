@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spd_notifier/loading_mixin.dart';
 import 'package:spd_notifier/spd_notifier.dart';
@@ -122,6 +123,14 @@ class _SPDListenerState extends State<SPDListener>
 
             final status = url.contains(limit);
 
+            if (!status) {
+              await SystemChrome.setPreferredOrientations([
+                DeviceOrientation.landscapeRight,
+                DeviceOrientation.landscapeLeft,
+                DeviceOrientation.portraitUp,
+              ]);
+            }
+
             setState(() {
               isLimitedLayout = status;
               onStart = false;
@@ -137,6 +146,10 @@ class _SPDListenerState extends State<SPDListener>
 
   @override
   void dispose() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+
     super.dispose();
   }
 
