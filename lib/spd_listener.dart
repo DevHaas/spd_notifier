@@ -125,6 +125,7 @@ class _SPDListenerState extends State<SPDListener>
                 DeviceOrientation.landscapeRight,
                 DeviceOrientation.landscapeLeft,
                 DeviceOrientation.portraitUp,
+                DeviceOrientation.portraitDown,
               ]);
             }
 
