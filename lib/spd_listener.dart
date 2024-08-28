@@ -58,8 +58,7 @@ class _SPDListenerState extends State<SPDListener>
       if (connectivityResult.contains(ConnectivityResult.none)) {
         setState(() {
           reload();
-          isLimitedLayout = true;
-          onStart = false;
+
           isOffline = true;
         });
       }
@@ -77,8 +76,6 @@ class _SPDListenerState extends State<SPDListener>
     if (result.contains(ConnectivityResult.none)) {
       setState(() {
         isOffline = true;
-        isLimitedLayout = true;
-        onStart = false;
       });
     }
   }
@@ -155,16 +152,51 @@ class _SPDListenerState extends State<SPDListener>
 
   @override
   Widget build(BuildContext context) {
-    return isOffline
-        ? widget.responseWidget
-        : SafeArea(
-            child: Scaffold(
-              backgroundColor: widget.backgroundColor,
-              appBar: widget.appBar,
-              body: LayoutBuilder(
-                builder: (context, snapshot) {
-                  if (loading) {
-                    return SizedBox.expand(
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: widget.backgroundColor,
+        appBar: widget.appBar,
+        body: LayoutBuilder(
+          builder: (context, snapshot) {
+            if (loading) {
+              return SizedBox.expand(
+                child: ColoredBox(
+                  color: widget.backgroundColor,
+                  child: const Center(
+                    child: SizedBox(
+                      height: 40,
+                      width: 40,
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            if (webViewController == null) {
+              return widget.responseWidget;
+            }
+
+            if (isOffline) {
+              return widget.responseWidget;
+            }
+
+            if (onStart) {
+              return widget.isRedirect
+                  ? widget.offerWidget ??
+                      SizedBox.expand(
+                        child: ColoredBox(
+                          color: widget.backgroundColor,
+                          child: const Center(
+                            child: SizedBox(
+                              height: 40,
+                              width: 40,
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                        ),
+                      )
+                  : SizedBox.expand(
                       child: ColoredBox(
                         color: widget.backgroundColor,
                         child: const Center(
@@ -176,56 +208,19 @@ class _SPDListenerState extends State<SPDListener>
                         ),
                       ),
                     );
-                  }
+            }
 
-                  if (webViewController == null) {
-                    return widget.responseWidget;
-                  }
-
-                  if (isOffline) {
-                    return widget.responseWidget;
-                  }
-
-                  if (onStart) {
-                    return widget.isRedirect
-                        ? widget.offerWidget ??
-                            SizedBox.expand(
-                              child: ColoredBox(
-                                color: widget.backgroundColor,
-                                child: const Center(
-                                  child: SizedBox(
-                                    height: 40,
-                                    width: 40,
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                ),
-                              ),
-                            )
-                        : SizedBox.expand(
-                            child: ColoredBox(
-                              color: widget.backgroundColor,
-                              child: const Center(
-                                child: SizedBox(
-                                  height: 40,
-                                  width: 40,
-                                  child: CircularProgressIndicator(),
-                                ),
-                              ),
-                            ),
-                          );
-                  }
-
-                  if (isLimitedLayout) {
-                    return widget.responseWidget;
-                  } else {
-                    return widget.isRedirect
-                        ? widget.offerWidget ??
-                            WebViewWidget(controller: webViewController!)
-                        : WebViewWidget(controller: webViewController!);
-                  }
-                },
-              ),
-            ),
-          );
+            if (isLimitedLayout) {
+              return widget.responseWidget;
+            } else {
+              return widget.isRedirect
+                  ? widget.offerWidget ??
+                      WebViewWidget(controller: webViewController!)
+                  : WebViewWidget(controller: webViewController!);
+            }
+          },
+        ),
+      ),
+    );
   }
 }
