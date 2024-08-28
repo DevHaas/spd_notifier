@@ -16,6 +16,7 @@ class SPDListener extends StatefulWidget {
   final Widget responseWidget;
   final PreferredSizeWidget? appBar;
   final Widget? offerWidget;
+  final Widget offlineWidget;
 
   final bool isRedirect;
 
@@ -26,6 +27,7 @@ class SPDListener extends StatefulWidget {
     this.offerWidget,
     this.isRedirect = false,
     super.key,
+    required this.offlineWidget,
   });
 
   @override
@@ -153,51 +155,16 @@ class _SPDListenerState extends State<SPDListener>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: widget.backgroundColor,
-        appBar: widget.appBar,
-        body: LayoutBuilder(
-          builder: (context, snapshot) {
-            if (loading) {
-              return SizedBox.expand(
-                child: ColoredBox(
-                  color: widget.backgroundColor,
-                  child: const Center(
-                    child: SizedBox(
-                      height: 40,
-                      width: 40,
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
-                ),
-              );
-            }
-
-            if (webViewController == null) {
-              return widget.responseWidget;
-            }
-
-            if (isOffline) {
-              return widget.responseWidget;
-            }
-
-            if (onStart) {
-              return widget.isRedirect
-                  ? widget.offerWidget ??
-                      SizedBox.expand(
-                        child: ColoredBox(
-                          color: widget.backgroundColor,
-                          child: const Center(
-                            child: SizedBox(
-                              height: 40,
-                              width: 40,
-                              child: CircularProgressIndicator(),
-                            ),
-                          ),
-                        ),
-                      )
-                  : SizedBox.expand(
+    return isOffline
+        ? widget.offlineWidget
+        : SafeArea(
+            child: Scaffold(
+              backgroundColor: widget.backgroundColor,
+              appBar: widget.appBar,
+              body: LayoutBuilder(
+                builder: (context, snapshot) {
+                  if (loading) {
+                    return SizedBox.expand(
                       child: ColoredBox(
                         color: widget.backgroundColor,
                         child: const Center(
@@ -209,19 +176,56 @@ class _SPDListenerState extends State<SPDListener>
                         ),
                       ),
                     );
-            }
+                  }
 
-            if (isLimitedLayout) {
-              return widget.responseWidget;
-            } else {
-              return widget.isRedirect
-                  ? widget.offerWidget ??
-                      WebViewWidget(controller: webViewController!)
-                  : WebViewWidget(controller: webViewController!);
-            }
-          },
-        ),
-      ),
-    );
+                  if (webViewController == null) {
+                    return widget.responseWidget;
+                  }
+
+                  if (isOffline) {
+                    return widget.offlineWidget;
+                  }
+
+                  if (onStart) {
+                    return widget.isRedirect
+                        ? widget.offerWidget ??
+                            SizedBox.expand(
+                              child: ColoredBox(
+                                color: widget.backgroundColor,
+                                child: const Center(
+                                  child: SizedBox(
+                                    height: 40,
+                                    width: 40,
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                              ),
+                            )
+                        : SizedBox.expand(
+                            child: ColoredBox(
+                              color: widget.backgroundColor,
+                              child: const Center(
+                                child: SizedBox(
+                                  height: 40,
+                                  width: 40,
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                            ),
+                          );
+                  }
+
+                  if (isLimitedLayout) {
+                    return widget.responseWidget;
+                  } else {
+                    return widget.isRedirect
+                        ? widget.offerWidget ??
+                            WebViewWidget(controller: webViewController!)
+                        : WebViewWidget(controller: webViewController!);
+                  }
+                },
+              ),
+            ),
+          );
   }
 }
