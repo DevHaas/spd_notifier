@@ -17,6 +17,7 @@ class SPDListener extends StatefulWidget {
   final PreferredSizeWidget? appBar;
   final Widget? offerWidget;
   final Widget offlineWidget;
+  final Function(bool)? onLimitedLayoutChanged;
 
   final bool isRedirect;
 
@@ -28,6 +29,7 @@ class SPDListener extends StatefulWidget {
     this.isRedirect = false,
     super.key,
     required this.offlineWidget,
+    this.onLimitedLayoutChanged,
   });
 
   @override
@@ -89,6 +91,10 @@ class _SPDListenerState extends State<SPDListener>
     fetchData = prefs.getString(SpdNotifier.integrationKey);
 
     if (fetchData == null) {
+      if (widget.onLimitedLayoutChanged != null) {
+        widget.onLimitedLayoutChanged!.call(false);
+      }
+
       setState(() {
         isLimitedLayout = true;
         onStart = false;
@@ -112,6 +118,10 @@ class _SPDListenerState extends State<SPDListener>
             final limit = prefs.getString(SpdNotifier.limitedKey);
 
             if (limit == null) {
+              if (widget.onLimitedLayoutChanged != null) {
+                widget.onLimitedLayoutChanged!.call(false);
+              }
+
               setState(() {
                 isLimitedLayout = true;
                 onStart = false;
@@ -123,6 +133,10 @@ class _SPDListenerState extends State<SPDListener>
             final status = url.contains(limit);
 
             if (!status) {
+              if (widget.onLimitedLayoutChanged != null) {
+                widget.onLimitedLayoutChanged!.call(status);
+              }
+
               await SystemChrome.setPreferredOrientations([
                 DeviceOrientation.landscapeRight,
                 DeviceOrientation.landscapeLeft,
@@ -138,6 +152,10 @@ class _SPDListenerState extends State<SPDListener>
           },
         ),
       );
+
+    if (widget.onLimitedLayoutChanged != null) {
+      widget.onLimitedLayoutChanged!.call(true);
+    }
 
     await _loadConnectionChecker();
 
