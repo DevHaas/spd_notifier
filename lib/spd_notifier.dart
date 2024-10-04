@@ -79,7 +79,7 @@ class SpdNotifier {
     final fetchData = prefs.getString(integrationKey);
 
     if (fetchData != null) {
-      final webViewController = WebViewController()
+      WebViewController()
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..loadRequest(Uri.parse(fetchData))
         ..setNavigationDelegate(

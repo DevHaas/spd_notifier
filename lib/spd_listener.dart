@@ -22,13 +22,13 @@ class SPDListener extends StatefulWidget {
   final bool isRedirect;
 
   const SPDListener({
+    super.key,
     required this.responseWidget,
     required this.backgroundColor,
+    required this.offlineWidget,
     this.appBar,
     this.offerWidget,
     this.isRedirect = false,
-    super.key,
-    required this.offlineWidget,
     this.onLimitedLayoutChanged,
   });
 
